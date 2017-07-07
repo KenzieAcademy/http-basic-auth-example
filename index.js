@@ -32,7 +32,6 @@ passport.use(new BasicStrategy(function(username, password, done) {
       // })
       // The above returns the first element in the array [1, 2, 3, 4, 5] which is even, or 2.
       // If none of the items returns true, find will return undefined to signify that nothing was found.
-    })
       const loggedInUser = users.find(function(user) {
         return user.get("username") === username && user.get("password") === password;
       });
@@ -58,7 +57,7 @@ app.get('/register/:username/:password', function(req, res) {
 // using authentication middleware.
 app.get("/", authMiddleware, function(req, res) {
     const user = req.user || "you";
-    res.send('hello, ' + user + '! <a href="/logout">Log Out</a>');
+    res.send('hello, ' + user.get("username") + '! <a href="/logout">Log Out</a>');
 });
 
 app.get("/logout", function(req, res) {
