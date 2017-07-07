@@ -16,7 +16,7 @@ passport.use(new BasicStrategy(function(username, password, done) {
     });
 }));
 
-app.get('/register/:username/:password', function(req, res) {
+app.get("/register/:username/:password", function(req, res) {
   models.User.create(req.params)
     .then(function() {
       res.redirect("/");
@@ -24,7 +24,7 @@ app.get('/register/:username/:password', function(req, res) {
 });
 
 app.get("/", passport.authenticate("basic", {session: false}), function(req, res) {
-    res.send(`hello, ${req.user.get("username")}! <a href="/logout">LogOut</a>`);
+    res.send('Hello, ' + req.user.get("username") + '! <a href="/logout">Log Out</a>');
 });
 
 app.get("/logout", function(req, res) {
