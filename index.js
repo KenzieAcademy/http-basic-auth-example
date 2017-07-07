@@ -8,11 +8,8 @@ app = express();
 
 // Don't try this at home kids
 passport.use(new BasicStrategy((username, password, done) =>
-  User.findAll().then(users =>
-    done(null, users.find(user =>
-      user.get("username") === username && user.get("password") === password
-    ) || false)
-  )
+  User.findOne({where: { username, password }})
+  .then(loggedInUser => done(null, loggedInUser || false))
 ));
 
 app.get("/register/:username/:password", (req, res) =>
