@@ -56,7 +56,7 @@ app.get('/register/:username/:password', function(req, res) {
 // Note the second argument here, which tells our app router that we want to protect this router
 // using authentication middleware.
 app.get("/", authMiddleware, function(req, res) {
-    res.send('hello, ' + req.user.get("username") + '! <a href="/logout">Log Out</a>');
+    res.send('Hello, ' + req.user.get("username") + '! <a href="/logout">Log Out</a>');
 });
 
 app.get("/logout", function(req, res) {
