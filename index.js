@@ -1,37 +1,34 @@
 const express = require("express");
 const passport = require("passport");
-const BasicStrategy = require("passport-http").BasicStrategy;
+const {BasicStrategy} = require("passport-http");
 
-const models = require("./models");
+const {User} = require("./models");
 
 app = express();
 
-passport.use(new BasicStrategy(function(username, password, done) {
-    models.User.findAll().then(function(users) {
-      const loggedInUser = users.find(function(user) {
-        return user.get("username") === username && user.get("password") === password;
-      });
+// Note: I could have written this as a single expression, avoiding the `return`
+// keyword all together, but that got rather difficult to read.
+passport.use(new BasicStrategy((username, password, done) => {
+  return User.findAll().then(users => {
+    const loggedInUser = users.find(user =>
+      user.get("username") === username && user.get("password") === password
+    );
 
-      return done(null, loggedInUser || false);
-    });
-}));
+    return done(null, loggedInUser || false);
+  })
+}))
 
-app.get('/register/:username/:password', function(req, res) {
-  models.User.create(req.params)
-    .then(function() {
-      res.redirect("/");
-    });
+app.get("/register/:username/:password", (req, res) => {
+  User.create(req.params).then(() => res.redirect("/"));
 });
 
-app.get("/", passport.authenticate("basic", {session: false}), function(req, res) {
-    res.send(`hello, ${req.user.get("username")}! <a href="/logout">LogOut</a>`);
+app.get("/", passport.authenticate("basic", {session: false}), (req, res) => {
+  res.send(`Hello, ${req.user.get("username")}! <a href="/logout">LogOut</a>`);
 });
 
-app.get("/logout", function(req, res) {
+app.get("/logout", (req, res) => {
   res.status(401);
   res.send("Please register by using /register/:username/:password");
-})
-
-app.listen(3000, function() {
-  console.log("now listening to NPR....");
 });
+
+app.listen(3000, () => console.log("now listening to NPR...."));
