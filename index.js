@@ -7,11 +7,12 @@ const models = require("./models");
 app = express();
 
 passport.use(new BasicStrategy(function(username, password, done) {
-    models.User.findAll().then(function(users) {
-      const loggedInUser = users.find(function(user) {
-        return user.get("username") === username && user.get("password") === password;
-      });
-
+    models.User.findOne({
+      where: {
+        username: username,
+        password: password
+      }
+    }).then(function(loggedInUser) {
       return done(null, loggedInUser || false);
     });
 }));
