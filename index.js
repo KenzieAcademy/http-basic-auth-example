@@ -23,19 +23,13 @@ const authMiddleware = passport.authenticate("basic", {session: false});
 // to signal that a user still needs to log in. In our simple case, we unconditionally pass null
 // to signify that we don't want to raise an exception, then either return the logged in user, or false.
 passport.use(new BasicStrategy(function(username, password, done) {
-    models.User.findAll().then(function(users) {
-      // Array.prototype.find takes a function that accepts an element of the array and is expected
-      // to return either true or false. This function is then called on each element of the array,
-      // and find returns the first of these to return true. For example:
-      // [1, 2, 3, 4, 5].find(function(num) {
-      //    return num % 2 == 0;
-      // })
-      // The above returns the first element in the array [1, 2, 3, 4, 5] which is even, or 2.
-      // If none of the items returns true, find will return undefined to signify that nothing was found.
-      const loggedInUser = users.find(function(user) {
-        return user.get("username") === username && user.get("password") === password;
-      });
-
+    models.User.findOne({
+      where: {
+        username: username,
+        password: password
+      }
+    })
+    .then(function(loggedInUser){
       if (loggedInUser) {
         return done(null, loggedInUser);
       } else {
