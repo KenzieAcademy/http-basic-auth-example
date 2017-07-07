@@ -6,25 +6,22 @@ const {User} = require("./models");
 
 app = express();
 
-// Note: I could have written this as a single expression, avoiding the `return`
-// keyword all together, but that got rather difficult to read.
-passport.use(new BasicStrategy((username, password, done) => {
-  return User.findAll().then(users => {
-    const loggedInUser = users.find(user =>
+// Don't try this at home kids
+passport.use(new BasicStrategy((username, password, done) =>
+  User.findAll().then(users =>
+    done(null, users.find(user =>
       user.get("username") === username && user.get("password") === password
-    );
+    ) || false)
+  )
+));
 
-    return done(null, loggedInUser || false);
-  })
-}))
+app.get("/register/:username/:password", (req, res) =>
+  User.create(req.params).then(() => res.redirect("/"))
+);
 
-app.get("/register/:username/:password", (req, res) => {
-  User.create(req.params).then(() => res.redirect("/"));
-});
-
-app.get("/", passport.authenticate("basic", {session: false}), (req, res) => {
-  res.send(`Hello, ${req.user.get("username")}! <a href="/logout">Log Out</a>`);
-});
+app.get("/", passport.authenticate("basic", {session: false}), (req, res) =>
+  res.send(`Hello, ${req.user.get("username")}! <a href="/logout">Log Out</a>`)
+);
 
 app.get("/logout", (req, res) => {
   res.status(401);
