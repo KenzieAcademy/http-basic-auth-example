@@ -23,7 +23,7 @@ app.get("/register/:username/:password", (req, res) => {
 });
 
 app.get("/", passport.authenticate("basic", {session: false}), (req, res) => {
-  res.send(`Hello, ${req.user.get("username")}! <a href="/logout">LogOut</a>`);
+  res.send(`Hello, ${req.user.get("username")}! <a href="/logout">Log Out</a>`);
 });
 
 app.get("/logout", (req, res) => {
